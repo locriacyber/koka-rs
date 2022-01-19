@@ -1,0 +1,44 @@
+Koka {    
+    program = token*
+    token = whitespace | lexeme
+  
+    whitespace = white | newline
+    newline = "\r"? "\n"
+    white = " " | blockcomment | linecomment | linedirective
+    linecomment = "//" linechar*
+    linechar = graphic | utf8 | " " | "\t"
+    blockcomment = "/*" blockchars (blockcomment blockchars)? "*/"
+    blockchars = (linechar | newline)*
+    linedirective = newline "#" linechar*
+    
+    graphic = "\x21".."\x7E"
+    utf8 = "\x80".."\uFFFF" // bug
+    
+    lexeme = id | wildcard | literal | keyword | keyop | special
+    id = varid | conid | opid | modulepath id
+    modulepath = (lowerid "/")+
+
+    wildcard = "_" alphanumeric*
+    varid = lowerid
+    conid = upperid
+    opid = "(" op ")"
+
+    lowerid = lower alphanumeric*
+    upperid = upper alphanumeric*
+
+    alphanumeric = digits | upper | lower | "-" | "_"
+    lower = "a" .. "z"
+    upper = "A".."Z"
+    digits = "0".."9"
+
+    literal = "" // todo
+    
+
+    keyop = "=" | "." | ":" | "->" 
+    keyword = "infix" | "infixr" | "infixl" | "module" | "import" | "as" | "pub" | "abstract" | "type" | "struct" | "alias" | "effect" | "con" | "forall" | "exists" | "some" | "fun" | "fn" | "val" | "var" | "extern" | "if" | "then" | "else" | "elif" | "match" | "return" | "with" | "in" | "handle" | "handler" | "mask" | "ctl" | "final" | "raw" | "override" | "named" | "interface" | "break" | "continue" | "unsafe" 
+    special = "{" | "}" | "(" | ")" | "[" | "]" | ";" | "," 
+
+    op = symbol+
+    symbol = anglebar | "$" | "%" | "&" | "*" | "+" | "~" | "!" | "\\" | "^" | "#" | "=" | "." | ":" | "~" | "?"
+    anglebar = "<" | ">" | "| "
+}
